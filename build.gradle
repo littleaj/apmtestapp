@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.8'
+    implementation 'org.apache.commons:commons-lang3:3.8.1'
+    implementation 'org.apache.commons:commons-io:1.3.2'
+    implementation 'javax.servlet:jstl:1.2'
+
+    testImplementation 'junit:junit:4.12'
+}
+
+task('deploy') {
+    doLast {
+        if (!project.hasProperty('deployDir')) {
+            throw new GradleException("'deployDir' is required for the deploy task")
+        }
+        def srcFile = file(war.archivePath)
+        def destFile = file("${project.properties['deployDir']}")
+        copy {
+            from srcFile
+            into destFile
+        }
+    }
+    dependsOn 'assemble'
+}
